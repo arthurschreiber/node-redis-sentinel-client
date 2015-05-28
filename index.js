@@ -135,8 +135,10 @@ RedisSentinelClient.prototype._connectSentinel = function (port, host) {
   this.sentinelTalker.on('end', function(){
     debug('sentinel talker disconnected at ' + host + ':' + port);
     if (!isDisconnected) {
-      isDisconnected = true
-      self.emit('sentinel disconnected')
+      isDisconnected = true;
+      if (!self.sentinelTalker.closing) {
+        self.emit('sentinel disconnected');
+      }
     }
   });
 
@@ -153,7 +155,9 @@ RedisSentinelClient.prototype._connectSentinel = function (port, host) {
     debug('sentinel listener disconnected at ' + host + ':' + port);
     if (!isDisconnected) {
       isDisconnected = true
-      self.emit('sentinel disconnected')
+      if (!self.sentinelListener.closing) {
+        self.emit('sentinel disconnected');
+      }
     }
   });
 
